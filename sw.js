@@ -1,5 +1,5 @@
 /* E-MECH Solver offline cache. Bump VERSION on every release so phones pick up the update. */
-const VERSION = "emech-v1";
+const VERSION = "emech-v2";
 const FILES = ["./", "index.html", "style.css", "manifest.webmanifest",
   "js/core.js", "js/kb.js", "js/engine.js", "js/parse.js", "js/sketch.js", "js/templates.js", "js/gallery.js", "js/words.js", "js/app.js",
   "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
