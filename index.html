@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>E-MECH Solver</title>
+<meta name="description" content="Offline step-by-step solver for EN-3111 Electrical Machines.">
+<meta name="theme-color" content="#1d4fb8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="E-MECH">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="row">
+    <div class="brand">E-MECH Solver<small>offline</small></div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" id="tab-quick" aria-selected="true" data-tab="quick">Quick</button>
+      <button role="tab" id="tab-full" aria-selected="false" data-tab="full">Full solution</button>
+      <button role="tab" id="tab-gallery" aria-selected="false" data-tab="gallery">Diagrams</button>
+      <button role="tab" id="tab-words" aria-selected="false" data-tab="words">Words</button>
+    </nav>
+  </div>
+</header>
+<main>
+  <section id="view-quick" data-view="quick"></section>
+  <section id="view-full" data-view="full" hidden></section>
+  <section id="view-gallery" data-view="gallery" hidden></section>
+  <section id="view-words" data-view="words" hidden></section>
+</main>
+<script src="js/core.js"></script>
+<script src="js/kb.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/parse.js"></script>
+<script src="js/sketch.js"></script>
+<script src="js/templates.js"></script>
+<script src="js/gallery.js"></script>
+<script src="js/words.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
