@@ -285,7 +285,7 @@
   // induction motor speed
   F("ns", "120*f/poles"); F("poles", "120*f/ns"); F("f", "ns*poles/120", { prio: 7 });
   F("ns", "", { fn: function (k) { return stdNs(k.f, k.nr); }, inputs: ["f", "nr"], prio: 8, check: false, text: "the standard synchronous speed just above n_r",
-    sub: function (k) { return "n_r = " + EM.fmt(k.nr.v, 5) + " rpm at " + EM.fmt(k.f.v, 4) + " Hz → standard speeds " + stdList(k.f.v) + " → pick the one just above n_r"; },
+    sub: function (k) { return "n_r = " + EM.fmt(k.nr.v, 5) + " rpm at " + EM.fmt(k.f.v, 4) + " Hz → standard speeds " + stdList(k.f.v); },
     note: "Rotor speed is always a little below synchronous speed (that difference is the slip)." });
   F("s", "(ns - nr)/ns"); F("nr", "ns*(1 - s)"); F("ns", "nr/(1 - s)", { prio: 6 }); F("nslip", "ns - nr"); F("f_r", "s*f"); F("s", "f_r/f", { prio: 6 });
   F("tau", "5252*hp/nr", { note: "Use the actual shaft speed n_r, not n_s." }); F("hp", "tau*nr/5252"); F("nr", "5252*hp/tau", { prio: 7 });

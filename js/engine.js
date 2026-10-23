@@ -103,7 +103,7 @@
     var known = closure(givens, ctx, extra);
     var tk = tokens(ctx), out = [], seen = {};
     FORMS.forEach(function (f) {
-      if (!f.check || f.fn || f.prio > 5) return;
+      if (!f.check || f.fn || (f.prio > 5 && !f.soft)) return;
       if (!f.when.every(function (w) { return tk[w]; })) return;
       var r = known[f.out]; if (!r || typeof r.v !== "number" || (r.given && r.assumed)) return;
       if (!r.given && r.f === f) return;
@@ -147,7 +147,7 @@
     return t;
   };
   EM.symLine = function (f) {
-    if (f.fn) return EM.symHTML(Q[f.out].sym) + " = " + EM.esc(f.text);
+    if (f.fn) return EM.symHTML(Q[f.out].sym) + " = " + EM.esc(f.text).replace(/_([A-Za-z0-9]+)/g, "<sub>$1</sub>");
     return EM.symHTML(Q[f.out].sym) + " = " + EM.print(f.ast, function (n) { return EM.symHTML(Q[n].sym); });
   };
   EM.subLine = function (f, known, scale) {

@@ -35,7 +35,7 @@
     list = hard.slice(0, 2).concat(soft.slice(0, hard.length ? 0 : 1));
     return list.map(function (c) {
       var sc = EM.scaleFor(c.known), q = Q[c.id];
-      var txt = esc(q.name) + (c.haveGiven ? " was entered as " + esc(EM.valueText(c.id, c.have, sc)) : " comes out to " + esc(EM.valueText(c.id, c.have, sc)) + " working from your other values") + ", but " + EM.symLine(c.f) + " gives " + esc(EM.valueText(c.id, c.calc, sc)) + ".";
+      var txt = EM.md(q.name) + (c.haveGiven ? " was entered as " + esc(EM.valueText(c.id, c.have, sc)) : " comes out to " + esc(EM.valueText(c.id, c.have, sc)) + " working from your other values") + ", but " + EM.symLine(c.f) + " gives " + esc(EM.valueText(c.id, c.calc, sc)) + ".";
       return c.soft ? EM.flagHTML("warn", "Check", txt + " Textbook problems sometimes list values that don't quite match; the solution uses the values as given.") : EM.flagHTML("bad", "Numbers disagree", txt + " One of your entries may be off, or the question's data is inconsistent.");
     }).join("");
   };
@@ -96,7 +96,7 @@
     var list = EM.suggest(inp.value, S.ctx);
     ui.sugg = list;
     if (!list.length || !inp.value.trim() || /^[\s\d.+-]/.test(inp.value)) { sug.hidden = true; return; }
-    sug.innerHTML = list.map(function (id, i) { return '<button type="button" data-id="' + id + '" class="' + (i === ui.suggOn ? "on" : "") + '"><span class="sym">' + EM.symH(id) + '</span><span class="nm">' + esc(Q[id].name) + "</span></button>"; }).join("");
+    sug.innerHTML = list.map(function (id, i) { return '<button type="button" data-id="' + id + '" class="' + (i === ui.suggOn ? "on" : "") + '"><span class="sym">' + EM.symH(id) + '</span><span class="nm">' + EM.md(Q[id].name) + "</span></button>"; }).join("");
     sug.hidden = false;
   }
   inp.addEventListener("input", function () { ui.suggOn = -1; ui.err = ""; $("#q-err").textContent = ""; showSugg(); });
@@ -136,7 +136,7 @@
     if (!ui.ask) { box.innerHTML = ""; return; }
     var it = ui.ask.items[0], q = Q[it.id];
     box.innerHTML = '<div class="ask"><div><b>' + esc(EM.withUnit(EM.display(q.dim, it.v).v, EM.display(q.dim, it.v).u)) + "</b> — which one is it?</div><div class=\"opts\">" +
-      ui.ask.choices.map(function (id) { return '<button class="btn small" type="button" data-pick="' + id + '"><span class="sym">' + EM.symH(id) + "</span> " + esc(Q[id].name) + "</button>"; }).join("") +
+      ui.ask.choices.map(function (id) { return '<button class="btn small" type="button" data-pick="' + id + '"><span class="sym">' + EM.symH(id) + "</span> " + EM.md(Q[id].name) + "</button>"; }).join("") +
       '</div><button class="btn small ghost" type="button" data-pick="">Cancel</button></div>';
   }
   $("#q-ask").addEventListener("click", function (e) {
@@ -153,7 +153,7 @@
     box.innerHTML = S.knowns.map(function (k, i) {
       var q = Q[k.id];
       if (ui.edit === i) return editHTML(k, i);
-      return '<div class="chip" role="group"><button type="button" class="chip" style="border:0;padding:0;background:transparent" data-edit="' + i + '" aria-label="Edit ' + esc(q.name) + '"><span class="lab"><span class="nm">' + esc(q.name) + '</span><span class="val">' + EM.symH(k.id) + " = " + esc(chipValue(k)) + "</span>" + (k.note ? '<span class="tag">' + esc(k.note) + "</span>" : "") + '</span></button><button type="button" class="x" data-del="' + i + '" aria-label="Remove ' + esc(q.name) + '">×</button></div>';
+      return '<div class="chip" role="group"><button type="button" class="chip" style="border:0;padding:0;background:transparent" data-edit="' + i + '" aria-label="Edit ' + esc(q.name) + '"><span class="lab"><span class="nm">' + EM.md(q.name) + '</span><span class="val">' + EM.symH(k.id) + " = " + esc(chipValue(k)) + "</span>" + (k.note ? '<span class="tag">' + esc(k.note) + "</span>" : "") + '</span></button><button type="button" class="x" data-del="' + i + '" aria-label="Remove ' + esc(q.name) + '">×</button></div>';
     }).join("");
   }
   function editHTML(k, i) {
@@ -161,9 +161,9 @@
     var alts = (k.alts || []).filter(function (a) { return Q[a] && a !== k.id; });
     if (alts.length < 3) Object.keys(Q).forEach(function (id) { if (alts.length < 10 && id !== k.id && Q[id].dim === q.dim && alts.indexOf(id) < 0 && !Q[id].opts.str) alts.push(id); });
     var d = q.opts.str ? { v: k.v, u: "" } : q.opts.frac ? { v: k.v, u: "" } : EM.display(q.dim, k.v);
-    return '<div class="edit"><div class="nm"><b>' + esc(q.name) + '</b> <span class="sym">' + EM.symH(k.id) + "</span></div>" +
+    return '<div class="edit"><div class="nm"><b>' + EM.md(q.name) + '</b> <span class="sym">' + EM.symH(k.id) + "</span></div>" +
       '<div style="display:flex;gap:6px;align-items:center"><input type="text" id="q-editv" value="' + esc(typeof d.v === "number" ? +d.v.toPrecision(10) : d.v) + '" aria-label="Value" style="flex:1"><span>' + esc(d.u) + "</span></div>" +
-      '<div class="hint">Is this actually something else?</div><div class="findchips">' + alts.map(function (a) { return '<button type="button" data-swap="' + a + '"><span class="sym">' + EM.symH(a) + "</span>" + esc(Q[a].name) + "</button>"; }).join("") + "</div>" +
+      '<div class="hint">Is this actually something else?</div><div class="findchips">' + alts.map(function (a) { return '<button type="button" data-swap="' + a + '"><span class="sym">' + EM.symH(a) + "</span>" + EM.md(Q[a].name) + "</button>"; }).join("") + "</div>" +
       '<div style="display:flex;gap:6px"><button class="btn small primary" type="button" data-save="' + i + '">Save</button><button class="btn small" type="button" data-cancel="1">Cancel</button><button class="btn small ghost" type="button" data-del="' + i + '">Remove</button></div></div>';
   }
   $("#q-chips").addEventListener("click", function (e) {
@@ -199,7 +199,7 @@
     if (!t) { fs.hidden = true; return; }
     var list = EM.suggest(t, S.ctx);
     if (!list.length) { fs.hidden = true; return; }
-    fs.innerHTML = list.map(function (id) { return '<button type="button" data-t="' + id + '"><span class="sym">' + EM.symH(id) + '</span><span class="nm">' + esc(Q[id].name) + "</span></button>"; }).join("");
+    fs.innerHTML = list.map(function (id) { return '<button type="button" data-t="' + id + '"><span class="sym">' + EM.symH(id) + '</span><span class="nm">' + EM.md(Q[id].name) + "</span></button>"; }).join("");
     fs.hidden = false;
   });
   fs.addEventListener("mousedown", function (e) { e.preventDefault(); });
@@ -214,14 +214,22 @@
     if (!S.knowns.length) { box.innerHTML = '<div class="hint">After you add values, everything you can find from them shows up here.</div>'; return; }
     var known = EM.closure(g, S.ctx);
     var derived = Object.keys(known).filter(function (id) { return !known[id].given; });
+    /* also list what becomes findable with a standard assumption (shown as "Assumed" in the work) */
+    var extra = {}, motorGiven = Object.keys(g).some(function (id) { return Q[id] && Q[id].group === "motor"; });
+    Object.keys(EM.ASSUMABLE).forEach(function (id) { if (g[id]) return; if (id === "f" && !motorGiven) return; extra[id] = EM.ASSUMABLE[id]; });
+    var harmGiven = ["I_1", "I_3", "I_5", "I_7", "I_9", "I_11"].some(function (id) { return g[id]; });
+    var asmOK = function (id) { var gq = Q[id].group; return /^(motor|offstd|curve|twospeed)$/.test(gq) || (gq === "harm" && harmGiven); };
+    var k2 = EM.closure(g, S.ctx, extra), asm = {};
+    Object.keys(k2).forEach(function (id) { if (!k2[id].given && !known[id] && asmOK(id)) { if (derived.indexOf(id) < 0) { derived.push(id); asm[id] = 1; } } });
     if (!derived.length) { box.innerHTML = '<div class="hint">Nothing can be found from these values alone yet. Search above to see what else is needed.</div>'; return; }
     var by = {};
     derived.forEach(function (id) { var gq = Q[id].group; (by[gq] = by[gq] || []).push(id); });
     var h = '<div class="hint">You can find:</div>';
     GROUP_ORDER.concat(Object.keys(by).filter(function (k) { return GROUP_ORDER.indexOf(k) < 0; })).forEach(function (gq) {
       if (!by[gq]) return;
-      h += '<div class="grp">' + esc(GROUP_NAMES[gq] || gq) + '</div><div class="findchips">' + by[gq].map(function (id) { return '<button type="button" data-t="' + id + '" class="' + (S.target === id ? "on" : "") + '" title="' + esc(Q[id].name) + '"><span class="sym">' + EM.symH(id) + "</span>" + esc(Q[id].name) + "</button>"; }).join("") + "</div>";
+      h += '<div class="grp">' + esc(GROUP_NAMES[gq] || gq) + '</div><div class="findchips">' + by[gq].map(function (id) { return '<button type="button" data-t="' + id + '" class="' + (S.target === id ? "on" : "") + '" title="' + esc(Q[id].name) + (asm[id] ? " (uses a standard assumption)" : "") + '"><span class="sym">' + EM.symH(id) + "</span>" + EM.md(Q[id].name) + (asm[id] ? " *" : "") + "</button>"; }).join("") + "</div>";
     });
+    if (Object.keys(asm).length) h += '<div class="hint">* uses a standard assumption (stray loss 0, missing harmonics 0, or 60 Hz) — it is flagged in the work.</div>';
     box.innerHTML = h;
   }
   $("#q-can").addEventListener("click", function (e) { var b = e.target.closest("[data-t]"); if (!b) return; S.target = b.dataset.t; save(); renderAll(); scrollToBoard(); });
@@ -237,11 +245,11 @@
       h += bridgeHTML() + "</div>"; board.innerHTML = h; return;
     }
     var q = Q[S.target], res = EM.solve(g, S.ctx, S.target);
-    h += '<div><div class="grp">Finding</div><h3 style="font-size:22px">' + esc(q.name) + ' <span class="sym">' + EM.symH(S.target) + "</span></h3></div>";
+    h += '<div><div class="grp">Finding</div><h3 style="font-size:22px">' + EM.md(q.name) + ' <span class="sym">' + EM.symH(S.target) + "</span></h3></div>";
     if (!res.ok) {
-      h += '<p>Not enough information yet. To find <b>' + esc(q.name) + "</b> you need one of these:</p><ul>";
+      h += '<p>Not enough information yet. To find <b>' + EM.md(q.name) + "</b> you need one of these:</p><ul>";
       res.missing.forEach(function (m) {
-        var parts = m.need.map(function (id) { return esc(Q[id].name) + ' <span class="sym">' + EM.symH(id) + "</span>"; });
+        var parts = m.need.map(function (id) { return EM.md(Q[id].name) + ' <span class="sym">' + EM.symH(id) + "</span>"; });
         m.ctxNeed.forEach(function (c) { parts.push("<i>" + esc(ctxText(c)) + "</i>"); });
         h += "<li>" + (parts.length ? parts.join(" + ") : "<i>check your setup</i>") + ' <span class="hint">(for ' + EM.symLine(m.f) + ")</span></li>";
       });
@@ -257,7 +265,7 @@
     if (known[S.target].given) h += "<p>You entered this value directly.</p>";
     res.steps.forEach(function (r) { h += EM.stepHTML(r, known, sc); });
     var dec = EM.decide ? EM.decide(S.target, known, sc) : "";
-    h += '<div class="ans"><h3>Answer</h3><ul><li><span class="lb">' + esc(q.name) + "</span>" + EM.symH(S.target) + " = " + esc(EM.valueText(S.target, known[S.target].v, sc, true)) + "</li>" + (dec ? '<li style="font-family:var(--sans);font-size:15px">' + dec + "</li>" : "") + "</ul></div>";
+    h += '<div class="ans"><h3>Answer</h3><ul><li><span class="lb">' + EM.md(q.name) + "</span>" + EM.symH(S.target) + " = " + esc(EM.valueText(S.target, known[S.target].v, sc, true)) + "</li>" + (dec ? '<li style="font-family:var(--sans);font-size:15px">' + dec + "</li>" : "") + "</ul></div>";
     h += bridgeHTML() + "</div>";
     board.innerHTML = h;
   }
